@@ -3,10 +3,11 @@ import type { NextPage } from "next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Popup from "reactjs-popup";
 import { Pagination, Navigation } from "swiper";
+import { useEffect } from "react";
 
 const GET_PHOTOS = gql`
-  {
-    photos {
+  query Photos($cursor: String) {
+    photos(cursor: $cursor) {
       success
       error
       photos {
@@ -19,7 +20,45 @@ const GET_PHOTOS = gql`
 `;
 
 const Home: NextPage = () => {
-  const { data, loading } = useQuery(GET_PHOTOS);
+  const { data, loading, fetchMore } = useQuery(GET_PHOTOS, {
+    variables: { cursor: null },
+  });
+
+  const fetchMorePosts = () => {
+    fetchMore({
+      variables: {
+        cursor: data?.photos.photos[data?.photos.photos.length - 1].id,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+
+        return Object.assign({}, prev, {
+          photos: {
+            error: null,
+            success: true,
+            __typename: "PhotosOutput",
+            photos: [...prev.photos.photos, ...fetchMoreResult.photos.photos],
+          },
+        });
+      },
+    });
+  };
+
+  const handleScroll = () => {
+    const scrollHeight = document.documentElement.scrollHeight;
+    const scrollTop = document.documentElement.scrollTop;
+    const clientHeight = document.documentElement.clientHeight;
+    if (scrollTop + clientHeight >= scrollHeight && loading === false) {
+      fetchMorePosts();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
 
   return (
     <>
@@ -43,13 +82,13 @@ const Home: NextPage = () => {
           </svg>
         </div>
       ) : (
-        <div className="columns-2 md:columns-3 lg:columns-4">
+        <div className="masonry sm:masonry-sm md:masonry-md">
           {data?.photos.photos.map((photo: any) => (
             <Popup
               key={photo.id}
               trigger={
                 <img
-                  className="mb-4 rounded-lg"
+                  className="mb-4 rounded-lg break-inside"
                   src={photo.files[0]}
                   alt="dics image"
                 />
