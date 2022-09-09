@@ -4,7 +4,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "reactjs-popup/dist/index.css";
 import type { AppProps } from "next/app";
-import Header from "./components/Header";
+import Header from "../components/Header";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../apollo";
 

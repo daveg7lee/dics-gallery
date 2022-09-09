@@ -44,33 +44,42 @@ const Home: NextPage = () => {
         </div>
       ) : (
         <div className="columns-2 md:columns-3 lg:columns-4">
-          {data.photos.photos.map((photo: any) => (
+          {data?.photos.photos.map((photo: any) => (
             <Popup
               key={photo.id}
               trigger={
                 <img
-                  className="mb-4 rounded"
+                  className="mb-4 rounded-lg"
                   src={photo.files[0]}
                   alt="dics image"
                 />
               }
               modal
+              nested
             >
-              <Swiper
-                spaceBetween={50}
-                slidesPerView={1}
-                pagination={{
-                  clickable: true,
-                }}
-                navigation={true}
-                modules={[Pagination, Navigation]}
-              >
-                {photo.files.map((file: string, index: number) => (
-                  <SwiperSlide key={index}>
-                    <img src={file} alt="post image" />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+              <div className="p-2">
+                <Swiper
+                  spaceBetween={15}
+                  slidesPerView={1}
+                  pagination={{
+                    clickable: true,
+                  }}
+                  modules={[Pagination, Navigation]}
+                  {...{ style: { borderRadius: 10 } }}
+                >
+                  {photo.files.map((file: string, index: number) => (
+                    <SwiperSlide key={index}>
+                      <img src={file} alt="post image" className="rounded-lg" />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-base font-semibold">
+                    {photo.caption}
+                  </span>
+                  <i className="fa-solid fa-download" />
+                </div>
+              </div>
             </Popup>
           ))}
         </div>
