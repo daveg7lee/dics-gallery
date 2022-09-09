@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Popup from "reactjs-popup";
 import { Pagination, Navigation } from "swiper";
 import { useEffect } from "react";
+import Image from "next/image";
 
 const GET_PHOTOS = gql`
   query Photos($cursor: String) {
@@ -103,12 +104,25 @@ const Home: NextPage = () => {
                   pagination={{
                     clickable: true,
                   }}
+                  navigation
                   modules={[Pagination, Navigation]}
                   {...{ style: { borderRadius: 10 } }}
                 >
                   {photo.files.map((file: string, index: number) => (
                     <SwiperSlide key={index}>
-                      <img src={file} alt="post image" className="rounded-lg" />
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Image
+                          src={file}
+                          alt="post image"
+                          className="rounded-lg"
+                          width={700}
+                          height={700}
+                          objectFit="cover"
+                          quality={100}
+                          blurDataURL={file.replace("public", "preview")}
+                          placeholder="blur"
+                        />
+                      </div>
                     </SwiperSlide>
                   ))}
                 </Swiper>
