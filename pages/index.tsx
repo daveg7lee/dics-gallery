@@ -2,9 +2,8 @@ import { gql, useQuery } from "@apollo/client";
 import type { NextPage } from "next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Popup from "reactjs-popup";
-import { Pagination, Navigation } from "swiper";
+import { Pagination, Navigation, Mousewheel, Keyboard } from "swiper";
 import { useEffect } from "react";
-import Image from "next/image";
 
 const GET_PHOTOS = gql`
   query Photos($cursor: String) {
@@ -97,42 +96,44 @@ const Home: NextPage = () => {
               modal
               nested
             >
-              <div className="p-2">
-                <Swiper
-                  spaceBetween={15}
-                  slidesPerView={1}
-                  pagination={{
-                    clickable: true,
-                  }}
-                  navigation
-                  modules={[Pagination, Navigation]}
-                  {...{ style: { borderRadius: 10 } }}
-                >
-                  {photo.files.map((file: string, index: number) => (
-                    <SwiperSlide key={index}>
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Image
-                          src={file}
-                          alt="post image"
-                          className="rounded-lg"
-                          width={700}
-                          height={700}
-                          objectFit="cover"
-                          quality={100}
-                          blurDataURL={file.replace("public", "preview")}
-                          placeholder="blur"
-                        />
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-base font-semibold">
-                    {photo.caption}
-                  </span>
-                  <i className="fa-solid fa-download" />
+              {(close: any) => (
+                <div className="h-full w-full bg-white flex items-center justify-center flex-col">
+                  <div className="w-full flex justify-end">
+                    <button
+                      className="text-2xl md:text-3xl font-bold"
+                      onClick={close}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                  <Swiper
+                    spaceBetween={15}
+                    slidesPerView={1}
+                    mousewheel
+                    keyboard
+                    modules={[Mousewheel, Keyboard]}
+                    {...{ style: { borderRadius: 10 } }}
+                  >
+                    {photo.files.map((file: string, index: number) => (
+                      <SwiperSlide key={index}>
+                        <div className="w-full h-full flex justify-center items-center">
+                          <img
+                            src={file}
+                            alt="post image"
+                            className="bg-contain"
+                          />
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  <div className="flex items-center justify-between w-full text-left">
+                    <span className="text-base font-semibold">
+                      {photo.caption}
+                    </span>
+                    <i className="fa-solid fa-download" />
+                  </div>
                 </div>
-              </div>
+              )}
             </Popup>
           ))}
         </div>
