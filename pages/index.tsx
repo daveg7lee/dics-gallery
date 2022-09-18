@@ -1,9 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import type { NextPage } from "next";
-import { Swiper, SwiperSlide } from "swiper/react";
 import Popup from "reactjs-popup";
-import { Pagination, Navigation, Mousewheel, Keyboard } from "swiper";
 import { useEffect } from "react";
+import ModalContent from "../components/ModalContent";
 
 const GET_PHOTOS = gql`
   query Photos($cursor: String) {
@@ -88,7 +87,7 @@ const Home: NextPage = () => {
               key={photo.id}
               trigger={
                 <img
-                  className="mb-4 rounded-lg break-inside"
+                  className="mb-4 rounded-lg break-inside cursor-pointer"
                   src={photo.files[0]}
                   alt="dics image"
                 />
@@ -96,44 +95,7 @@ const Home: NextPage = () => {
               modal
               nested
             >
-              {(close: any) => (
-                <div className="h-full w-full bg-white flex items-center justify-center flex-col">
-                  <div className="w-full flex justify-end">
-                    <button
-                      className="text-2xl md:text-3xl font-bold"
-                      onClick={close}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                  <Swiper
-                    spaceBetween={15}
-                    slidesPerView={1}
-                    mousewheel
-                    keyboard
-                    modules={[Mousewheel, Keyboard]}
-                    {...{ style: { borderRadius: 10 } }}
-                  >
-                    {photo.files.map((file: string, index: number) => (
-                      <SwiperSlide key={index}>
-                        <div className="w-full h-full flex justify-center items-center">
-                          <img
-                            src={file}
-                            alt="post image"
-                            className="bg-contain"
-                          />
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                  <div className="flex items-center justify-between w-full text-left">
-                    <span className="text-base font-semibold">
-                      {photo.caption}
-                    </span>
-                    <i className="fa-solid fa-download" />
-                  </div>
-                </div>
-              )}
+              <ModalContent close={close} photo={photo} />
             </Popup>
           ))}
         </div>
